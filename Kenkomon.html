@@ -4,12 +4,12 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.7.1/p5.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.7.1/addons/p5.dom.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.7.1/addons/p5.sound.min.js"></script>
-    <link rel="stylesheet" type="text/css" href="style.css">
+    <!--<link rel="stylesheet" type="text/css" href="style.css">-->
 </head>
 
 <body>
 
-    <script src="sketch.js"></script>
+    <script src="multipath.js"></script>
 
     <!-- Test SVG -->
     <div>
@@ -30,92 +30,10 @@
 
 
     <script>
-        // TODO: Extract SVG creation class to general class for drawing SVG into pixels
-        // How it works
-        // (1) Create array for canvas
-        // (2) Create an array for the drawn SVG object, by walking along it
-        // (3a) Draw the white pixel squares
-        // (3b) Compare the arrays from (1) and (2),
-        // if the drawn SVG object coordinate falls within the canvas square,
-        // make that fill a black square
-
-        //TODO: need to iterate through ALL svg vectors and push these onto the 'black square' array
 
         let canvArray = [];
         let eggArray = [];
         const pathIDs = ["svgpath1", "svgpath2", "svgpath3", "svgpath4", "svgpath5"];
-        // let pathVariables = [];
-        // let pathLengths = [];
-
-
-
-        class SVG_Multipath {
-          // Class returns an array of all points in an SVG
-
-          constructor(listOfPathIDs) {
-            this.pathIDs = listOfPathIDs;
-            this.pathVariables = [];
-            this.pathLengths = [];
-            this.pathArray = [];
-          }
-
-          path_Variables_Array() {
-            for (let n = 0; n < this.pathIDs.length; n++) {
-                this.pathVariables.push(document.getElementById(this.pathIDs[n]));
-              }
-          }
-          path_Lengths_Array() {
-              for (let n = 0; n < this.pathIDs.length; n++) {
-                  this.pathLengths.push(this.pathVariables[n].getTotalLength());
-                }
-          }
-          svg_Path_Length() {
-            this.path_Variables_Array();
-            this.path_Lengths_Array();
-              for (let n = 0; n < this.pathIDs.length; n++) {
-                for (let m = 0; m < this.pathLengths[n]; m++) {
-                    const path_x = this.pathVariables[n].getPointAtLength(m).x;
-                    const path_y = this.pathVariables[n].getPointAtLength(m).y;
-                    this.pathArray.push([path_x, path_y]);
-              }
-            }
-          }
-          svg_Array() {
-            this.svg_Path_Length();
-            return this.pathArray;
-          }
-        }
-        //
-        //
-        //
-        // // Put all the paths into an array
-        // function pathVariablesArray() {
-        //     for (let n = 0; n < pathIDs.length; n++) {
-        //         pathVariables.push(document.getElementById(pathIDs[n]));
-        //       }
-        // }
-        //
-        // // Put the lengths of all the paths into another array
-        // function pathLengthsArray() {
-        //     for (let n = 0; n < pathIDs.length; n++) {
-        //         pathLengths.push(pathVariables[n].getTotalLength());
-        //       }
-        // }
-        //
-        // // The outer "for-loop" iterates over each SVG path by ID in "pathIDs"
-        // // The Innner "for-loop" then adds all points along that path to none
-        // // massive array called "pathArray."
-        // function svgPathLength(path, length, pathArray) {
-        //   pathVariablesArray()
-        //   pathLengthsArray()
-        //     for (let n = 0; n < pathIDs.length; n++) {
-        //       for (let m = 0; m < length[n]; m++) {
-        //           const path_x = path[n].getPointAtLength(m).x;
-        //           const path_y = path[n].getPointAtLength(m).y;
-        //           pathArray.push([path_x, path_y]);
-        //       }
-        //     }
-        // }
 
         function setup() {
             createCanvas(300, 300);
@@ -131,13 +49,9 @@
                 x += 1
             }
 
-            // Create an array of all points in the SVG path
-            // svgPathLength(pathVariables, pathLengths, eggArray);
-
             const p = new SVG_Multipath(pathIDs, eggArray);
             eggArray = p.svg_Array();
-            // eggArray.push(p.svg_Array());
-            // console.log(eggArray);
+
 
         }
 
@@ -170,8 +84,8 @@
 
         }
 
-
       </script>
+
 </body>
 
 </html>
