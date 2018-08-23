@@ -1,0 +1,130 @@
+<html>
+
+<head>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.7.1/p5.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.7.1/addons/p5.dom.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.7.1/addons/p5.sound.min.js"></script>
+    <!--<link rel="stylesheet" type="text/css" href="style.css">-->
+</head>
+
+<body>
+
+    <script src="multipath.js"></script>
+    <script src="path.js"></script>
+
+    <!-- Test SVG -->
+    <div>
+    <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+        width="300px" height="300px" viewBox="0 0 300 300" enable-background="new 0 0 300 300" xml:space="preserve">
+        <g>
+            <path id="svgpath1" fill="none" stroke="#000000" stroke-miterlimit="10" d="M268.334,182.997c0,55.514-53.334,98.002-118.334,98.002
+    c-70.333,0-118.334-51.258-118.334-98.747c0-71.73,45.493-167.464,117.218-167.464S268.334,111.266,268.334,182.997z" />
+            <polyline id="svgpath2" fill="none" stroke="#000000" stroke-miterlimit="10" points="85,209.007 111.667,201.007 146.333,209.007 171,201.007
+    185,209.007 199.667,201.007 218.333,209.007 " />
+            <polyline id="svgpath3" fill="none" stroke="#000000" stroke-miterlimit="10" points="84.33,100.655 96.33,81.321 116.996,81.321 127.667,94.657
+    " />
+            <line id="svgpath4" fill="none" stroke="#000000" stroke-miterlimit="10" x1="106.669" y1="105.666" x2="106.669" y2="126.332" />
+            <line id="svgpath5" fill="none" stroke="#000000" stroke-miterlimit="10" x1="180.333" y1="105.666" x2="232.333" y2="105.666" />
+        </g>
+    </svg>
+
+    <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+    	 width="300px" height="300px" viewBox="0 0 300 300" enable-background="new 0 0 300 300" xml:space="preserve">
+    <path id="potato" fill="none" stroke="#000000" stroke-miterlimit="10" d="M115,63c21-19,55.199,7.732,65,22
+    	c14.643,21.316,30.043,30.299,33.5,56c3.237,24.063,15.34,36.342,3.219,57.085C195.396,234.575,180.85,234.007,140,227.5
+    	c-29.304-4.667-34.5-17.5-51.5-49.5c-7.431-13.988-9.572-27.715-3.452-41.968c4.165-9.698,7.085-16.263,13.948-24.278
+    	C109.379,99.629,103.221,73.658,115,63z"/>
+    </svg>
+
+
+    </div>
+
+
+    <script>
+
+        let canvArray = [];
+        let eggArray = [];
+        let squareArray = [];
+        const pathIDs = ["svgpath1", "svgpath2", "svgpath3", "svgpath4", "svgpath5"];
+        const pathIDs_square = ["potato"];
+        const allPathsArray = [];
+
+        function make_Equal_Length(array1, array2) {
+            const arrayAbsDif = Math.abs(array2.length - array1.length);
+            if (array2.length > array1.length) {
+
+              const arrayLengthRatio = (array2.length / arrayAbsDif);
+
+              for (let indxValue = 0; indxValue < arrayAbsDif; indxValue++) {
+                  array1.splice(Math.round(arrayLengthRatio*indxValue), 0, array1[Math.round(arrayLengthRatio*indxValue)]);
+              }
+            }
+            else {
+
+              const arrayLengthRatio =  (array1.length / arrayAbsDif);
+
+              for (let indxValue = 0; indxValue < arrayAbsDif; indxValue++) {
+
+                  array2.splice(Math.round(arrayLengthRatio*indxValue), 0, array2[Math.round(arrayLengthRatio*indxValue)]);
+                }
+            }
+            if (array2.length != array1.length) {
+              console.log("WARNING: ARRAY LENGTH ERROR")
+            }
+          }
+
+        function interp(list1, list2, amt) {
+          let returnList = [];
+          for (let listIndx = 0; listIndx < list1.length; listIndx++) {
+            x_list1 = list1[listIndx][0];
+            y_list1 = list1[listIndx][1];
+            x_list2 = list2[listIndx][0];
+            y_list2 = list2[listIndx][1];
+            returnList[listIndx] = [lerp(list1[listIndx][0], list2[listIndx][0], amt), lerp(list1[listIndx][1], list2[listIndx][1], amt)];
+          }
+          return returnList;
+        }
+
+        function setup() {
+            createCanvas(300, 300);
+
+            // Create a 300px x 300px canvas of 8-bit style squares and add all those coordinates to an array
+            let x = 0;
+            while (x < 30) {
+                for (var i = 0; i < 30; i++) {
+                    xCoOrd = i * 10;
+                    yCoOrd = x * 10;
+                    canvArray.push([xCoOrd, yCoOrd]);
+                }
+                x += 1
+            }
+
+            const p = new SVG_Multipath(pathIDs, eggArray);
+            eggArray = p.svg_Array();
+
+            const b = new SVG_Multipath(pathIDs_square, squareArray);
+            squareArray = b.svg_Array();
+
+            make_Equal_Length(eggArray, squareArray);
+
+            allPathsArray.push(interp(eggArray, squareArray, 0.3));
+
+        }
+
+        function draw() {
+
+            background(220);
+            noStroke();
+            fill(255);
+
+
+            const a = new Path(canvArray, allPathsArray);
+            a.draw_Path();
+
+        }
+
+      </script>
+
+</body>
+
+</html>
